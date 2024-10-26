@@ -5,7 +5,7 @@ import path from 'node:path'
 const app = new Hono<{ Bindings: CloudflareBindings }>()
 
 app.get('/', (c) => {
-  return c.text('Hello Hono (which is flame in japanese)!')
+  return c.text('Hello Hono!')
 })
 
 app.get('/path', (c) => {
