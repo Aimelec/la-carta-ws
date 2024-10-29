@@ -4,7 +4,7 @@ main = "src/index.ts"
 compatibility_flags = [ "nodejs_compat" ]
 compatibility_date = "2024-10-22"
 
-account_id = 3d037cbbf2bd6dbf6f49085b2dee50d1
+account_id = "3d037cbbf2bd6dbf6f49085b2dee50d1"
 
 # Workers Logs
 # Docs: https://developers.cloudflare.com/workers/observability/logs/workers-logs/
