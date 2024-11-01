@@ -1,13 +1,17 @@
 import { Hono } from 'hono'
 import { validator } from 'hono/validator';
 import { restaurantValidator } from '../validators/restaurantValidator';
-import { createRestaurant } from '../interactors/create_restaurant';
+import { createRestaurant } from '../interactors/createRestaurant';
+import { fetchRestaurants } from '../interactors/fetchRestaurants';
 
 
 const controller = new Hono<{ Bindings: CloudflareBindings }>();
 
 controller.get('/', 
-  ( c ) => c.json( { message: 'Here you have the restaurants!' } )
+  async ( c ) => {
+    const restaurants = await fetchRestaurants.for(c);
+    return c.json( restaurants );
+  } 
 );
 
 controller.post('/',

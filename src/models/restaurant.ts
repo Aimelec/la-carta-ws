@@ -39,7 +39,7 @@ export class Restaurant {
       longitude: this.longitude,
       menuUrl: this.menuUrl,
       logoUrl: this.logoUrl,
-      information: this.information,
+      information: this.information
     };
   }
 }
