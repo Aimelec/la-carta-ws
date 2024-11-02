@@ -1,6 +1,6 @@
 import { Context } from 'hono';
 import { context } from '../types/context';
-import { createRestaurantParams } from '../types/create_restaurant';
+import { createRestaurantParams } from '../types/createRestaurant';
 
 class RestaurantValidator {
   private requiredFields = [
