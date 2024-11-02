@@ -45,6 +45,8 @@ controller.post('/:idRestaurant/tables/:idTable/orders',
       state_id: 1,
     }
     const order = await createOrder.for(createOrderParams, c)
+    
+    return c.json (order, 201)
   }
 
 );
