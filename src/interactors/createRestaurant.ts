@@ -1,8 +1,8 @@
 import Restaurant from "../models/restaurant";
-import { RestaurantRepository } from "../repositories/restaurant_repository";
-import { TableRepository } from "../repositories/table_repository";
+import { RestaurantRepository } from "../repositories/restaurantRepository";
+import { TableRepository } from "../repositories/tableRepository";
 import { context } from "../types/context";
-import { createRestaurantParams } from "../types/create_restaurant";
+import { createRestaurantParams } from "../types/createRestaurant";
 
 export class createRestaurant {
   params: createRestaurantParams;

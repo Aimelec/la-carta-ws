@@ -1,6 +1,6 @@
 import Restaurant from "../models/restaurant";
 import { context } from "../types/context";
-import { createRestaurantParams } from "../types/create_restaurant";
+import { createRestaurantParams } from "../types/createRestaurant";
 
 
 class RestaurantRepository {
