@@ -11,7 +11,7 @@ class TableRepository {
     const values = this.prepareValuesForCreation(restaurantId, tableCount);
     const valuesSQLTemplate = this.generateValuesSQLTemplate(values);
 
-    const query = `INSERT INTO tables (restaurant_id, number, only_pickup) VALUES ${valuesSQLTemplate}`;
+    const query = `INSERT INTO tables (restaurantId, number, onlyPickup) VALUES ${valuesSQLTemplate}`;
 
     await this.database.prepare(query).bind( ...values.flat() ).run();
   }

@@ -12,7 +12,7 @@ CREATE TABLE IF NOT EXISTS orders (
     FOREIGN KEY (stateId) REFERENCES orderStates(id)
 );
 
-DROP TABLE IF EXISTS orderstates;
+DROP TABLE IF EXISTS orderStates;
 CREATE TABLE IF NOT EXISTS orderStates (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     state VARCHAR(50) NOT NULL UNIQUE
@@ -48,5 +48,3 @@ CREATE TABLE IF NOT EXISTS restaurants (
     information TEXT,
     createdAt DATETIME DEFAULT CURRENT_TIMESTAMP
 );
-
-

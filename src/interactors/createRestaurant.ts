@@ -1,4 +1,3 @@
-import Restaurant from "../models/restaurant";
 import { RestaurantRepository } from "../repositories/restaurantRepository";
 import { TableRepository } from "../repositories/tableRepository";
 import { context } from "../types/context";

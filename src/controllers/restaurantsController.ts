@@ -4,19 +4,23 @@ import { restaurantValidator } from '../validators/restaurantValidator';
 import { createRestaurant } from '../interactors/createRestaurant';
 import { orderValidator } from '../validators/orderValidator';
 import { createOrder } from '../interactors/createOrder';
+import { fetchRestaurants } from '../interactors/fetchRestaurants';
+
 
 const controller = new Hono<{ Bindings: CloudflareBindings }>();
 
 controller.get('/', 
-  ( c ) => c.json( { message: 'Here you have the restaurants!' } )
-);
-
-
+  async ( c ) => {
+    const restaurants = await fetchRestaurants.for(c);
+    return c.json( restaurants );
+  } 
+  );
+  
+  
 controller.post('/',
   validator('json', (value, c) => restaurantValidator.validate(value, c) ),
   async ( c ) => {
     try{
-      console.log(c.req.valid('json'))
       const params = c.req.valid('json');
       const restaurant = await createRestaurant.for(params, c);
       
@@ -44,5 +48,6 @@ controller.post('/:idRestaurant/tables/:idTable/orders',
   }
 
 );
+
 
 export { controller as restaurantsController } ;
