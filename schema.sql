@@ -6,7 +6,6 @@ CREATE TABLE IF NOT EXISTS orders (
     stateId INTEGER NOT NULL,
     information TEXT,
     deviceId VARCHAR(255) NOT NULL,
-    FOREIGN KEY (restaurantId) REFERENCES restaurants(id)
     FOREIGN KEY (tableId) REFERENCES tables(id),
     FOREIGN KEY (stateId) REFERENCES orderStates(id)
 );
