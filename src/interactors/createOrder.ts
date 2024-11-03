@@ -6,7 +6,6 @@ import { createOrderParams } from '../types/createOrder'
 
 export class createOrder {
     params: createOrderParams;
-    context: context;
     orderRepository: OrderRepository
   
     static async for(params: createOrderParams, context: context) {
@@ -16,7 +15,6 @@ export class createOrder {
   
     constructor(params: createOrderParams, context: context) {
       this.params = params;
-      this.context = context;
       this.orderRepository = new OrderRepository(context);
       
     }

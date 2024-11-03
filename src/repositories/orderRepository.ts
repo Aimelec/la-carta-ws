@@ -1,6 +1,6 @@
 import { context } from "../types/context";
 import { createOrderParams } from "../types/createOrder";
-
+import Order, {OrderParams} from "../models/order"
 
 class OrderRepository {
   database: D1Database;
@@ -9,27 +9,27 @@ class OrderRepository {
     this.database = context.env.DB;
   }
 
-  async createOrder(params: createOrderParams){
+  async createOrder(params: createOrderParams) {
     const {
-        restaurant_id, 
-        table_id,
+        restaurantId, 
+        tableId,
         information,
-        device_id,
-        state_id,
-    } = params
+        deviceId,
+        stateId,
+    } = params;
 
-    await this.database.prepare(
-        "INSERT INTO orders (restaurant_id, table_id, state_id, information, device_id) VALUES (?, ?, ?, ?, ?)"
+    const {meta} = await this.database.prepare(
+        "INSERT INTO orders (restaurantId, tableId, stateId, information, deviceId) VALUES (?, ?, ?, ?, ?)"
       )
       .bind( 
-        restaurant_id,
-        table_id,
-        state_id,
+        restaurantId,
+        tableId,
+        stateId,
         information,
-        device_id)
+        deviceId)
       .run();
     
-    return {...params}
+    return Order.from( { id: meta.last_row_id as number, ...params } );
   }
 }
 

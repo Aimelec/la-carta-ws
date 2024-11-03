@@ -1,7 +1,7 @@
 export type createOrderParams = {
-    restaurant_id: number,
-    table_id: number,
+    restaurantId: number,
+    tableId: number,
     information: string;
-    device_id: string;
-    state_id: number
+    deviceId: string;
+    stateId: number
 }
