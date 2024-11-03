@@ -1,12 +1,11 @@
 DROP TABLE IF EXISTS orders;
 CREATE TABLE IF NOT EXISTS orders (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    restaurantId INTEGER NOT NULL,
     tableId INTEGER NOT NULL,
+    createdAt DATETIME DEFAULT CURRENT_TIMESTAMP,
     stateId INTEGER NOT NULL,
     information TEXT,
     deviceId VARCHAR(255) NOT NULL,
-    createdAt DATETIME DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (restaurantId) REFERENCES restaurants(id)
     FOREIGN KEY (tableId) REFERENCES tables(id),
     FOREIGN KEY (stateId) REFERENCES orderStates(id)

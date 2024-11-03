@@ -1,6 +1,5 @@
 export type OrderParams = {
     id: number;
-    restaurantId: number,
     tableId: number,
     information: string;
     deviceId: string;
@@ -9,7 +8,6 @@ export type OrderParams = {
   
 export class Order {
     id: number;
-    restaurantId: number;
     tableId: number;
     information: string;
     deviceId: string;
@@ -21,7 +19,6 @@ export class Order {
   
     constructor(params: OrderParams) {
       this.id = params.id;
-      this.restaurantId = params.restaurantId;
       this.tableId = params.tableId;
       this.information = params.information;
       this.deviceId = params.deviceId;

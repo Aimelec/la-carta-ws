@@ -13,7 +13,7 @@ controller.post('/restaurants/:idRestaurant/tables/:idTable',
     const body = c.req.valid('json');
     const params = c.req.valid('param')
     const createOrderParams = {
-      ...params,
+      tableId: params.tableId,
       ...body,
       stateId: 1,
     }

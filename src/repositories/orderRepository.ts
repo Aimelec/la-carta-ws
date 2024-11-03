@@ -10,8 +10,7 @@ class OrderRepository {
   }
 
   async createOrder(params: createOrderParams) {
-    const {
-        restaurantId, 
+    const { 
         tableId,
         information,
         deviceId,
@@ -19,10 +18,9 @@ class OrderRepository {
     } = params;
 
     const {meta} = await this.database.prepare(
-        "INSERT INTO orders (restaurantId, tableId, stateId, information, deviceId) VALUES (?, ?, ?, ?, ?)"
+        "INSERT INTO orders (tableId, stateId, information, deviceId) VALUES (?, ?, ?, ?)"
       )
       .bind( 
-        restaurantId,
         tableId,
         stateId,
         information,
