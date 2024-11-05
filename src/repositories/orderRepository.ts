@@ -61,6 +61,44 @@ class OrderRepository {
     } );
   }
 
-}
+  
+  async fetchAnOrder(idOrder: number) {
+    const resultIdOrderExists = await this.database.prepare (
+      "select exists( select 1 from orders where orders.id = ?) as rowExists"
+    )
+    .bind(idOrder).all()
+    const orderExists = resultIdOrderExists.results[0].rowExists as boolean
+    
+    if(!orderExists) 
+      return `Error: Order with id: ${idOrder} does not exist`
+    
+    const { results } = await this.database.prepare(
+      "select o.id, o.tableId, o.stateId, orderStates.state, o.information, o.deviceId from orders o inner join orderStates on o.stateId = orderStates.id where o.id = ?;"
+    )
+    .bind(idOrder).all();
 
-export { OrderRepository };
+    const order = Order.from(results[0] as OrderParams)
+    return {
+      ...order,
+      state: results[0].state
+    }
+    
+/*    return results.map( (row : any) => { 
+      const modelParams: OrderParams = {
+        id: row.id,
+        tableId: row.tableId,
+        stateId: row.stateId,
+        information: row.orderInformation,
+        deviceId: row.deviceId
+      }
+      const order =  Order.from(modelParams)
+      return {
+        ...order,
+        state: row.state
+      } 
+    } );*/
+  }
+}
+  
+  
+  export { OrderRepository };
