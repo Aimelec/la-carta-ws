@@ -27,7 +27,7 @@ class OrderRepository {
         deviceId)
       .run();
     
-    return Order.from( { id: meta.last_row_id as number, ...params } );
+    return Order.from( { id: meta.last_row_id as number, ...params, state: 'pending' } );
   }
 
   async fetchOrders(idRestaurant: number) {
@@ -49,15 +49,12 @@ class OrderRepository {
       const modelParams: OrderParams = {
         id: row.id,
         tableId: row.tableId,
-        stateId: row.stateId,
         information: row.orderInformation,
-        deviceId: row.deviceId
-      }
-      const order =  Order.from(modelParams)
-      return {
-        ...order,
+        deviceId: row.deviceId,
+        stateId: row.stateId,
         state: row.state
-      } 
+      }
+      return Order.from(modelParams)
     } );
   }
 
@@ -77,11 +74,7 @@ class OrderRepository {
     )
     .bind(idOrder).all();
 
-    const order = Order.from(results[0] as OrderParams)
-    return {
-      ...order,
-      state: results[0].state
-    }
+    return Order.from(results[0] as OrderParams)
     
   }
 }
