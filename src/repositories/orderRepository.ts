@@ -83,20 +83,6 @@ class OrderRepository {
       state: results[0].state
     }
     
-/*    return results.map( (row : any) => { 
-      const modelParams: OrderParams = {
-        id: row.id,
-        tableId: row.tableId,
-        stateId: row.stateId,
-        information: row.orderInformation,
-        deviceId: row.deviceId
-      }
-      const order =  Order.from(modelParams)
-      return {
-        ...order,
-        state: row.state
-      } 
-    } );*/
   }
 }
   
