@@ -3,7 +3,8 @@ export type OrderParams = {
     tableId: number,
     information: string;
     deviceId: string;
-    stateId: number
+    stateId: number;
+    state: string
   };
   
 export class Order {
@@ -11,7 +12,8 @@ export class Order {
     tableId: number;
     information: string;
     deviceId: string;
-    stateId: number
+    stateId: number;
+    state:string
   
     static from(params: OrderParams) {
       return new Order(params);
@@ -23,19 +25,9 @@ export class Order {
       this.information = params.information;
       this.deviceId = params.deviceId;
       this.stateId = params.stateId;
+      this.state = params.state
       }
   
-/*    toJSON() {
-      return {
-        id: this.id,
-        name: this.name,
-        latitude: this.latitude,
-        longitude: this.longitude,
-        menuUrl: this.menuUrl,
-        logoUrl: this.logoUrl,
-        information: this.information
-      };
-    }*/
   }
   
   export default Order;
