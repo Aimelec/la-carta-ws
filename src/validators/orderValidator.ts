@@ -36,6 +36,18 @@ class OrderValidator {
             deviceId: params.deviceId,
         };
     }
+
+    validateRestaurantParam(params: any, c: context) {
+        return {
+            restaurantId: params.idRestaurant,
+        };
+    }
+
+    validateOrderParam(params: any, c: context){
+        return {
+            orderId: params.idOrder
+        }
+    }
 }
 
 const orderValidator = new OrderValidator();
