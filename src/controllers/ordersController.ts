@@ -7,22 +7,18 @@ import { fetchAnOrder } from '../interactors/fetchAnOrder';
 
 const controller = new Hono<{ Bindings: CloudflareBindings }>();
 
-controller.post('/restaurants/:idRestaurant/tables/:idTable',
-  validator('param', (value, c) => orderValidator.validateParam(value, c) ),
-  validator('json', (value, c) => orderValidator.validateBody(value, c) ),
-  async ( c) => {
-    const body = c.req.valid('json');
-    const params = c.req.valid('param')
-    const createOrderParams = {
-      tableId: params.tableId,
-      ...body,
-      stateId: 1,
-    }
-    const order = await createOrder.for(createOrderParams, c)
-    
-    return c.json (order, 201)
-  }
+controller.post( '/tables/:tableId/order',
+  validator( 'param', ( value ) => orderValidator.validateParam( value ) ),
+  validator( 'json', ( value, c ) => orderValidator.validateBody( value, c ) ),
+  async ( c ) => {
+    const body = c.req.valid( 'json' );
+    const params = c.req.valid( 'param' );
+    const createOrderParams = { ...params, ...body };
 
+    const order = await createOrder.with( createOrderParams, c )
+    
+    return c.json( order, 201 )
+  }
 );
 
 controller.get('/restaurants/:idRestaurant',

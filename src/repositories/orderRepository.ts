@@ -9,22 +9,16 @@ class OrderRepository {
     this.database = context.env.DB;
   }
 
-  async createOrder(params: createOrderParams) {
+  async createOrder( params: createOrderParams ) {
     const { 
         tableId,
         information,
-        deviceId,
-        stateId,
     } = params;
 
-    const {meta} = await this.database.prepare(
-        "INSERT INTO orders (tableId, stateId, information, deviceId) VALUES (?, ?, ?, ?)"
+    const { meta } = await this.database.prepare(
+        "INSERT INTO orders (tableId, stateId, information) VALUES (?, ?, ?)"
       )
-      .bind( 
-        tableId,
-        stateId,
-        information,
-        deviceId)
+      .bind( tableId, 1, information )
       .run();
     
     return Order.from( { id: meta.last_row_id as number, ...params, state: 'pending' } );
@@ -50,8 +44,6 @@ class OrderRepository {
         id: row.id,
         tableId: row.tableId,
         information: row.orderInformation,
-        deviceId: row.deviceId,
-        stateId: row.stateId,
         state: row.state
       }
       return Order.from(modelParams)
@@ -76,6 +68,20 @@ class OrderRepository {
 
     return Order.from(results[0] as OrderParams)
     
+  }
+
+  async findCurrentOrderOfTable( tableId: number ) {
+    const order = await this.database.prepare(
+      `SELECT * FROM orders 
+       WHERE tableId = ? 
+       AND stateId != (SELECT id FROM orderStates WHERE state = 'finished') 
+       ORDER BY createdAt DESC 
+       LIMIT 1`
+    )
+    .bind( tableId )
+    .first();
+
+    return !!order ? Order.from( order as OrderParams ) : null;
   }
 }
   
