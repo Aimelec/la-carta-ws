@@ -24,7 +24,7 @@ class OrderRepository {
     return Order.from( { id: meta.last_row_id as number, ...params, state: 'pending' } );
   }
 
-  async fetchOrders( idRestaurant: number ) {
+  async fetchOrders( restaurantId: number ) {
     const { results } = await this.database.prepare(
       `SELECT o.id, o.tableId, orderStates.state, o.information
        FROM restaurants r 
@@ -34,29 +34,25 @@ class OrderRepository {
        WHERE r.id = ? 
        AND orderStates.state != 'finished';`
     )
-    .bind(idRestaurant).all();
+    .bind( restaurantId )
+    .all();
 
     return results.map( ( row : any ) => Order.from( row as OrderParams ) );
   }
 
   
-  async fetchAnOrder(idOrder: number) {
-    const resultIdOrderExists = await this.database.prepare (
-      "select exists( select 1 from orders where orders.id = ?) as rowExists"
+  async fetchOrder( orderId: number ) {
+    const order = await this.database.prepare(
+      `SELECT o.id, o.tableId, orderStates.state, o.information
+       FROM orders o 
+       INNER JOIN orderStates ON o.stateId = orderStates.id 
+       WHERE o.id = ?
+       LIMIT 1`
     )
-    .bind(idOrder).all()
-    const orderExists = resultIdOrderExists.results[0].rowExists as boolean
-    
-    if(!orderExists) 
-      return `Error: Order with id: ${idOrder} does not exist`
-    
-    const { results } = await this.database.prepare(
-      "select o.id, o.tableId, o.stateId, orderStates.state, o.information, o.deviceId from orders o inner join orderStates on o.stateId = orderStates.id where o.id = ?;"
-    )
-    .bind(idOrder).all();
+    .bind( orderId )
+    .first();
 
-    return Order.from(results[0] as OrderParams)
-    
+    return order ? Order.from( order as OrderParams ) : null; 
   }
 
   async findCurrentOrderOfTable( tableId: number ) {
@@ -70,7 +66,7 @@ class OrderRepository {
     .bind( tableId )
     .first();
 
-    return !!order ? Order.from( order as OrderParams ) : null;
+    return order ? Order.from( order as OrderParams ) : null;
   }
 }
   

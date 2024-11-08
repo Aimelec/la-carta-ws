@@ -7,9 +7,9 @@ export class fetchOrders {
   orderRepository: OrderRepository;
   restaurantRepository: RestaurantRepository;
 
-  static async of( idRestaurant: number, context : context ) {
+  static async of( restaurantId: number, context : context ) {
     const interactor = new fetchOrders( context );
-    return await interactor.execute( idRestaurant );
+    return await interactor.execute( restaurantId );
   }
 
   constructor( context : context ) {
@@ -17,11 +17,11 @@ export class fetchOrders {
     this.restaurantRepository = new RestaurantRepository( context );
   }
 
-  async execute( idRestaurant: number ) {
-    const restaurant = await this.restaurantRepository.fetchRestaurant( idRestaurant );
+  async execute( restaurantId: number ) {
+    const restaurant = await this.restaurantRepository.fetchRestaurant( restaurantId );
 
     if ( !restaurant ) {
-      throw new BackendError( 404, `Restaurant with id: ${idRestaurant} does not exist` );
+      throw new BackendError( 404, `Restaurant with id: ${ restaurantId } does not exist` );
     }
 
     return await restaurant.orders();

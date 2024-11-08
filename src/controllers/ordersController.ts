@@ -3,7 +3,7 @@ import { validator } from 'hono/validator';
 import { orderValidator } from '../validators/orderValidator';
 import { createOrder } from '../interactors/createOrder';
 import { fetchOrders } from '../interactors/fetchOrdersOfRestaurant';
-import { fetchAnOrder } from '../interactors/fetchAnOrder';
+import { fetchAnOrder } from '../interactors/fetchOrder';
 
 const controller = new Hono<{ Bindings: CloudflareBindings }>();
 
@@ -30,12 +30,12 @@ controller.get( '/restaurants/:restaurantId/orders',
   }
 )
 
-controller.get('/:idOrder',
-  validator('param', (value, c) => orderValidator.validateOrderParam(value, c)),
+controller.get( 'orders/:orderId',
+  validator( 'param', ( value ) => orderValidator.validateOrderParam( value ) ),
   async ( c )=> {
-    const {orderId} = c.req.valid('param')
-    const order = await fetchAnOrder.for(orderId as number, c)
-    return c.json(order)
+    const { orderId } = c.req.valid( 'param' )
+    const order = await fetchAnOrder.for( orderId, c )
+    return c.json( order )
   }
 )
 

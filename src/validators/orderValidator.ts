@@ -31,15 +31,14 @@ class OrderValidator {
   }
 
   validateRestaurantParam( params: any ) {
-    console.log(params)
     return {
-      restaurantId: Number( params.restaurantId ),
+      restaurantId: Number( params.restaurantId )
     };
   }
 
-  validateOrderParam( params: any, c: context ){
+  validateOrderParam( params: any ){
     return {
-      orderId: params.idOrder
+      orderId: Number( params.orderId )
     }
   }
 }
