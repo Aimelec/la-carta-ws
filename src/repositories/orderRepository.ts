@@ -24,30 +24,19 @@ class OrderRepository {
     return Order.from( { id: meta.last_row_id as number, ...params, state: 'pending' } );
   }
 
-  async fetchOrders(idRestaurant: number) {
-    const resultIdRestaurantExists = await this.database.prepare (
-      "select exists( select 1 from restaurants where restaurants.id = ?) as rowExists"
-    )
-    .bind(idRestaurant).all()
-    const restaurantExists = resultIdRestaurantExists.results[0].rowExists as boolean
-
-    if(!restaurantExists) 
-      return `Error: Restaurant with id: ${idRestaurant} does not exist`
-    
+  async fetchOrders( idRestaurant: number ) {
     const { results } = await this.database.prepare(
-      "select o.id, o.tableId, o.stateId, orderStates.state, o.information as orderInformation, o.deviceId from restaurants r inner join tables t on r.id = t.restaurantId inner join orders o on t.id = o.tableId inner join orderStates on o.stateId = orderStates.id where r.id = ? and orderStates.state != 'finished';"
+      `SELECT o.id, o.tableId, orderStates.state, o.information
+       FROM restaurants r 
+       INNER JOIN tables t ON r.id = t.restaurantId 
+       INNER JOIN orders o ON t.id = o.tableId 
+       INNER JOIN orderStates ON o.stateId = orderStates.id 
+       WHERE r.id = ? 
+       AND orderStates.state != 'finished';`
     )
     .bind(idRestaurant).all();
 
-    return results.map( (row : any) => { 
-      const modelParams: OrderParams = {
-        id: row.id,
-        tableId: row.tableId,
-        information: row.orderInformation,
-        state: row.state
-      }
-      return Order.from(modelParams)
-    } );
+    return results.map( ( row : any ) => Order.from( row as OrderParams ) );
   }
 
   
