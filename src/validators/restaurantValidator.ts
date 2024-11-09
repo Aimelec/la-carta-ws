@@ -38,6 +38,12 @@ class RestaurantValidator extends Validator {
       tablesAmount: params.tablesAmount
     };
   }
+
+  validateParam( params: any ) {
+    return {
+      restaurantId: Number( params.restaurantId ),
+    };
+  }
 }
 
 const restaurantValidator = new RestaurantValidator();

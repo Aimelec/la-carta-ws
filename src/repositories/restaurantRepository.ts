@@ -34,11 +34,11 @@ class RestaurantRepository {
     return results.map( (row : any) => Restaurant.from(row, this.context) );
   }
 
-  async fetchRestaurant( idRestaurant: number ) {
+  async fetchRestaurant( restaurantId: number ) {
     const restaurant = await this.database.prepare(
       "SELECT * FROM restaurants WHERE id = ?"
     )
-    .bind(idRestaurant)
+    .bind( restaurantId )
     .first();
 
     return restaurant ? Restaurant.from( restaurant as RestaurantParams, this.context) : null;
