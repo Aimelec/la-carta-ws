@@ -1,13 +1,16 @@
 import Restaurant, { RestaurantParams } from "../models/restaurant";
-import { context } from "../types/context";
+import { Context } from "hono";
 import { createRestaurantParams } from "../types/createRestaurant";
 
 
 class RestaurantRepository {
   database: D1Database;
+  context: Context;
 
-  constructor(context: context) {
+
+  constructor(context: Context) {
     this.database = context.env.DB;
+    this.context = context;
   }
 
   async createRestaurant(params: createRestaurantParams) {
@@ -19,7 +22,7 @@ class RestaurantRepository {
     .bind(name, latitude, longitude, menuUrl, logoUrl, information)
     .run();
 
-    return Restaurant.from( { id: meta.last_row_id as number, ...params } );
+    return Restaurant.from( { id: meta.last_row_id as number, ...params }, this.context );
   }
 
   async fetchRestaurants() {
@@ -28,7 +31,17 @@ class RestaurantRepository {
     )
     .all();
 
-    return results.map( (row : any) => { console.log(row);return Restaurant.from(row) } );
+    return results.map( (row : any) => Restaurant.from(row, this.context) );
+  }
+
+  async fetchRestaurant( idRestaurant: number ) {
+    const restaurant = await this.database.prepare(
+      "SELECT * FROM restaurants WHERE id = ?"
+    )
+    .bind(idRestaurant)
+    .first();
+
+    return restaurant ? Restaurant.from( restaurant as RestaurantParams, this.context) : null;
   }
 }
 

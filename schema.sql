@@ -5,7 +5,6 @@ CREATE TABLE IF NOT EXISTS orders (
     createdAt DATETIME DEFAULT CURRENT_TIMESTAMP,
     stateId INTEGER NOT NULL,
     information TEXT,
-    deviceId VARCHAR(255) NOT NULL,
     FOREIGN KEY (tableId) REFERENCES tables(id),
     FOREIGN KEY (stateId) REFERENCES orderStates(id)
 );
@@ -17,22 +16,21 @@ CREATE TABLE IF NOT EXISTS orderStates (
 );
 
 INSERT INTO orderStates (state) VALUES 
-('pending'), 
-('accepted'), 
-('rejected'), 
-('inProgress'), 
-('ready'), 
-('finished');
+('Pendiente'), 
+('Aceptado'), 
+('Rechazado'), 
+('En preparación'),
+('Listo para ser retirado'), 
+('Pronto a ser servido'),
+('Terminado');
 
 DROP TABLE IF EXISTS tables;
 CREATE TABLE IF NOT EXISTS tables (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     restaurantId INTEGER NOT NULL,
-    number INT NOT NULL,
     createdAt DATETIME DEFAULT CURRENT_TIMESTAMP,
     onlyPickup BOOLEAN NOT NULL,
-    FOREIGN KEY (restaurantId) REFERENCES restaurants(id),
-    UNIQUE (restaurantId, number)
+    FOREIGN KEY (restaurantId) REFERENCES restaurants(id)
 );
 
 DROP TABLE IF EXISTS restaurants;

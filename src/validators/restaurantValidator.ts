@@ -1,9 +1,9 @@
-import { Context } from 'hono';
 import { context } from '../types/context';
 import { createRestaurantParams } from '../types/createRestaurant';
+import { Validator } from './validator';
 
-class RestaurantValidator {
-  private requiredFields = [
+class RestaurantValidator extends Validator {
+  protected requiredFields = [
     { key: 'name', type: 'string' },
     { key: 'latitude', type: 'number' },
     { key: 'longitude', type: 'number' },
@@ -13,25 +13,19 @@ class RestaurantValidator {
     { key: 'tablesAmount', type: 'number' },
   ];
 
-  private checkAbsenceInside(params: any) {
-    return this.requiredFields.find(
-      field => !params[field.key] || typeof params[field.key] !== field.type
-    );
-  }
-
   validate(params: createRestaurantParams, c: context) {
-    const absentField = this.checkAbsenceInside(params);
+    const absentField = this.checkAbsenceInside( params );
 
-    if (absentField) {
-      return c.json({ message: `${absentField.key} is required and must be a ${absentField.type}` }, 400);
+    if ( absentField ) {
+      return c.json( this.absentFieldMessage( absentField ), 400 );
     }
 
-    if (params.latitude < -90 || params.latitude > 90) {
-      return c.json({ message: 'Latitude must be between -90 and 90' }, 400);
+    if ( params.latitude < -90 || params.latitude > 90 ) {
+      return c.json( { message: 'Latitude must be between -90 and 90' }, 400 );
     }
 
-    if (params.longitude < -180 || params.longitude > 180) {
-      return c.json({ message: 'Longitude must be between -180 and 180' }, 400);
+    if ( params.longitude < -180 || params.longitude > 180 ) {
+      return c.json( { message: 'Longitude must be between -180 and 180' }, 400 );
     }
 
     return {

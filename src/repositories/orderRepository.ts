@@ -1,6 +1,7 @@
 import { context } from "../types/context";
 import { createOrderParams } from "../types/createOrder";
 import Order, {OrderParams} from "../models/order"
+import { OrderState } from "../models/orderState";
 
 class OrderRepository {
   database: D1Database;
@@ -9,75 +10,77 @@ class OrderRepository {
     this.database = context.env.DB;
   }
 
-  async createOrder(params: createOrderParams) {
+  async createOrder( params: createOrderParams ) {
     const { 
         tableId,
         information,
-        deviceId,
-        stateId,
     } = params;
 
-    const {meta} = await this.database.prepare(
-        "INSERT INTO orders (tableId, stateId, information, deviceId) VALUES (?, ?, ?, ?)"
+    const { meta } = await this.database.prepare(
+        "INSERT INTO orders (tableId, stateId, information) VALUES (?, ?, ?)"
       )
-      .bind( 
-        tableId,
-        stateId,
-        information,
-        deviceId)
+      .bind( tableId, 1, information )
       .run();
     
     return Order.from( { id: meta.last_row_id as number, ...params, state: 'pending' } );
   }
 
-  async fetchOrders(idRestaurant: number) {
-    const resultIdRestaurantExists = await this.database.prepare (
-      "select exists( select 1 from restaurants where restaurants.id = ?) as rowExists"
-    )
-    .bind(idRestaurant).all()
-    const restaurantExists = resultIdRestaurantExists.results[0].rowExists as boolean
-
-    if(!restaurantExists) 
-      return `Error: Restaurant with id: ${idRestaurant} does not exist`
-    
+  async fetchOrders( restaurantId: number ) {
     const { results } = await this.database.prepare(
-      "select o.id, o.tableId, o.stateId, orderStates.state, o.information as orderInformation, o.deviceId from restaurants r inner join tables t on r.id = t.restaurantId inner join orders o on t.id = o.tableId inner join orderStates on o.stateId = orderStates.id where r.id = ? and orderStates.state != 'finished';"
+      `SELECT o.id, o.tableId, orderStates.state, o.information
+       FROM restaurants r 
+       INNER JOIN tables t ON r.id = t.restaurantId 
+       INNER JOIN orders o ON t.id = o.tableId 
+       INNER JOIN orderStates ON o.stateId = orderStates.id 
+       WHERE r.id = ? 
+       AND orderStates.state != 'Terminado';`
     )
-    .bind(idRestaurant).all();
+    .bind( restaurantId )
+    .all();
 
-    return results.map( (row : any) => { 
-      const modelParams: OrderParams = {
-        id: row.id,
-        tableId: row.tableId,
-        information: row.orderInformation,
-        deviceId: row.deviceId,
-        stateId: row.stateId,
-        state: row.state
-      }
-      return Order.from(modelParams)
-    } );
+    return results.map( ( row : any ) => Order.from( row as OrderParams ) );
   }
 
   
-  async fetchAnOrder(idOrder: number) {
-    const resultIdOrderExists = await this.database.prepare (
-      "select exists( select 1 from orders where orders.id = ?) as rowExists"
+  async fetchOrder( orderId: number ) {
+    const order = await this.database.prepare(
+      `SELECT o.id, o.tableId, orderStates.state, o.information
+       FROM orders o 
+       INNER JOIN orderStates ON o.stateId = orderStates.id 
+       WHERE o.id = ?
+       LIMIT 1`
     )
-    .bind(idOrder).all()
-    const orderExists = resultIdOrderExists.results[0].rowExists as boolean
-    
-    if(!orderExists) 
-      return `Error: Order with id: ${idOrder} does not exist`
-    
-    const { results } = await this.database.prepare(
-      "select o.id, o.tableId, o.stateId, orderStates.state, o.information, o.deviceId from orders o inner join orderStates on o.stateId = orderStates.id where o.id = ?;"
-    )
-    .bind(idOrder).all();
+    .bind( orderId )
+    .first();
 
-    return Order.from(results[0] as OrderParams)
-    
+    return order ? Order.from( order as OrderParams ) : null; 
+  }
+
+  async findCurrentOrderOfTable( tableId: number ) {
+    const order = await this.database.prepare(
+      `SELECT * FROM orders 
+       WHERE tableId = ? 
+       AND stateId != (SELECT id FROM orderStates WHERE state = 'Terminado') 
+       ORDER BY createdAt DESC 
+       LIMIT 1`
+    )
+    .bind( tableId )
+    .first();
+
+    return order ? Order.from( order as OrderParams ) : null;
+  }
+
+  async updateOrderState( order: Order, newState: OrderState ) {
+    await this.database.prepare(
+      `UPDATE orders 
+       SET stateId = ? 
+       WHERE id = ?`
+    )
+    .bind( newState.id, order.id )
+    .run();
+
+    return Order.from( { ...order, state: newState.state } );
   }
 }
-  
-  
-  export { OrderRepository };
+
+export { OrderRepository };

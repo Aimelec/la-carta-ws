@@ -1,3 +1,6 @@
+import { Context } from "hono";
+import { OrderRepository } from "../repositories/orderRepository";
+
 export type RestaurantParams = {
   id: number;
   name: string;
@@ -16,12 +19,13 @@ export class Restaurant {
   menuUrl: string;
   logoUrl: string;
   information: string;
+  c: Context;
 
-  static from(params: RestaurantParams) {
-    return new Restaurant(params);
+  static from(params: RestaurantParams, c: Context) {
+    return new Restaurant(params, c);
   }
 
-  constructor(params: RestaurantParams) {
+  constructor(params: RestaurantParams, c: Context) {
     this.id = params.id;
     this.name = params.name;
     this.latitude = params.latitude;
@@ -29,6 +33,13 @@ export class Restaurant {
     this.menuUrl = params.menuUrl;
     this.logoUrl = params.logoUrl;
     this.information = params.information;
+    this.c = c;
+  }
+
+  async orders() {
+    const repository = new OrderRepository( this.c );
+
+    return await repository.fetchOrders( this.id );
   }
 
   toJSON() {

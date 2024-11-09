@@ -1,19 +1,26 @@
 import { OrderRepository } from "../repositories/orderRepository";
 import { context } from "../types/context";
+import BackendError from "../utils/BackendError";
 
-export class fetchOrders {
+export class fetchAnOrder {
   orderRepository: OrderRepository;
 
-  static async for( idRestaurant: number, context : context ) {
-    const interactor = new fetchOrders( context );
-    return await interactor.execute(idRestaurant);
+  static async for( orderId: number, context : context ) {
+    const interactor = new fetchAnOrder( context );
+    return await interactor.execute( orderId );
   }
 
   constructor( context : context ) {
     this.orderRepository = new OrderRepository( context );
   }
 
-  async execute(idRestaurant: number) {
-    return this.orderRepository.fetchOrders(idRestaurant);
+  async execute( orderId: number ) {
+    const order = await this.orderRepository.fetchOrder( orderId );
+
+    if ( !order ) {
+      throw new BackendError( 404, `Order with id: ${ orderId } does not exist` );
+    }
+
+    return order;
   }
 }
