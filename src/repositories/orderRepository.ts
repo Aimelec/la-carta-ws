@@ -33,7 +33,7 @@ class OrderRepository {
        INNER JOIN orders o ON t.id = o.tableId 
        INNER JOIN orderStates ON o.stateId = orderStates.id 
        WHERE r.id = ? 
-       AND orderStates.state != 'finished';`
+       AND orderStates.state != 'Terminado';`
     )
     .bind( restaurantId )
     .all();
@@ -60,7 +60,7 @@ class OrderRepository {
     const order = await this.database.prepare(
       `SELECT * FROM orders 
        WHERE tableId = ? 
-       AND stateId != (SELECT id FROM orderStates WHERE state = 'finished') 
+       AND stateId != (SELECT id FROM orderStates WHERE state = 'Terminado') 
        ORDER BY createdAt DESC 
        LIMIT 1`
     )

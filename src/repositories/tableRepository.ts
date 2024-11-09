@@ -10,7 +10,7 @@ class TableRepository {
     this.context = context;
   }
 
-  async findTable( tableId: number ) {
+  async fetchTable( tableId: number ) {
     const table = await this.database.prepare( "SELECT * FROM tables WHERE id = ?" )
       .bind(tableId)
       .first();

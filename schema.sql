@@ -16,12 +16,13 @@ CREATE TABLE IF NOT EXISTS orderStates (
 );
 
 INSERT INTO orderStates (state) VALUES 
-('pending'), 
-('accepted'), 
-('rejected'), 
-('inProgress'), 
-('ready'), 
-('finished');
+('Pendiente'), 
+('Aceptado'), 
+('Rechazado'), 
+('En preparación'),
+('Listo para ser retirado'), 
+('Pronto a ser servido'),
+('Terminado');
 
 DROP TABLE IF EXISTS tables;
 CREATE TABLE IF NOT EXISTS tables (

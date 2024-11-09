@@ -30,6 +30,14 @@ export class Table {
     return await orderRepository.findCurrentOrderOfTable( this.id );
   }
 
+  get validOrderStateIds() {
+    if ( this.onlyPickup ) {
+      return [ 1, 2, 3, 4, 5, 7 ];
+    }
+
+    return [ 1, 2, 3, 4, 6, 7 ];
+  }
+
   get isForPickup() {
     return this.onlyPickup;
   }

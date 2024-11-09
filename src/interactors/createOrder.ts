@@ -27,10 +27,10 @@ export class createOrder {
   } 
 
   private async validate() {
-    const table = await this.tableRepository.findTable( this.params.tableId );
+    const table = await this.tableRepository.fetchTable( this.params.tableId );
 
     if ( !table ) {
-      throw new BackendError( 404, 'Table not found' );
+      throw new BackendError( 404, `Table with id: ${ this.params.tableId } does not exist` );
     }
 
     await this.validateTableAvailability( table );
@@ -39,7 +39,7 @@ export class createOrder {
   private async validateTableAvailability( table: Table ) {
     if ( !table.isForPickup ) {
       if ( await table.currentOrder() ) {
-        throw new BackendError( 400, 'Table already has an order' );
+        throw new BackendError( 400, `Table ${ table.id } already has an order` );
       }
     }
   }
