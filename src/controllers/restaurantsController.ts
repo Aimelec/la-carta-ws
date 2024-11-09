@@ -9,10 +9,11 @@ const controller = new Hono<{ Bindings: CloudflareBindings }>();
 
 controller.get('/', 
   async ( c ) => {
-    const restaurants = await fetchRestaurants.for(c);
+    const restaurants = await fetchRestaurants.for( c );
+
     return c.json( restaurants );
-  } 
-  );
+  }
+);
   
   
 controller.post('/',

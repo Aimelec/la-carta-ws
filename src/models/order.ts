@@ -1,11 +1,9 @@
-import { Context } from "hono";
-
 export type OrderParams = {
-    id: number;
-    tableId: number,
-    information: string;
-    state: string
-  };
+  id: number;
+  tableId: number,
+  information: string;
+  state: string
+};
   
 export class Order {
   id: number;

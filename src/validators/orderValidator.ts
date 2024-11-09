@@ -1,16 +1,11 @@
 import { context } from '../types/context';
 import { createOrderParams } from '../types/createOrder';
+import { Validator } from './validator';
 
-class OrderValidator {
-  private requiredFields = [
+class OrderValidator extends Validator {
+  protected requiredFields = [
     { key: 'information', type: 'string' }
   ];
-
-  private checkAbsenceInside( params: any ) {
-    return this.requiredFields.find(
-      field => !params[ field.key ] || typeof params[ field.key ] !== field.type
-    );
-  }
 
   validateParam( params: any ) {
     return {
@@ -21,12 +16,12 @@ class OrderValidator {
   validateBody( params: createOrderParams, c: context ) {
     const absentField = this.checkAbsenceInside( params );
 
-    if (absentField) {
-      return c.json( { message: `${ absentField.key } is required and must be a ${ absentField.type }` }, 400 );
+    if ( absentField ) {
+      return c.json( this.absentFieldMessage( absentField ), 400 );
     }
 
     return {
-      information: params.information,
+      information: params.information
     };
   }
 

@@ -1,6 +1,7 @@
 import { context } from "../types/context";
 import { createOrderParams } from "../types/createOrder";
 import Order, {OrderParams} from "../models/order"
+import { OrderState } from "../models/orderState";
 
 class OrderRepository {
   database: D1Database;
@@ -68,7 +69,18 @@ class OrderRepository {
 
     return order ? Order.from( order as OrderParams ) : null;
   }
+
+  async updateOrderState( order: Order, newState: OrderState ) {
+    await this.database.prepare(
+      `UPDATE orders 
+       SET stateId = ? 
+       WHERE id = ?`
+    )
+    .bind( newState.id, order.id )
+    .run();
+
+    return Order.from( { ...order, state: newState.state } );
+  }
 }
-  
-  
-  export { OrderRepository };
+
+export { OrderRepository };
